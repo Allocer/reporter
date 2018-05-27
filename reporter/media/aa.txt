@@ -1,0 +1,76 @@
+import os
+import sys
+import pefile
+
+
+def file_is_empty(path):
+    return os.path.getsize(path) > 0
+
+
+def print_base_file_info(pe):
+    print '---BASE FILE INFO---'
+    print 'Entry point: ', hex(pe.OPTIONAL_HEADER.AddressOfEntryPoint)
+    print 'Image base: ', hex(pe.OPTIONAL_HEADER.ImageBase)
+    print 'Version info length: ', hex(pe.VS_VERSIONINFO.Length)
+    print 'Version info type: ', hex(pe.VS_VERSIONINFO.Type)
+    print 'Version info value length: ', hex(pe.VS_VERSIONINFO.ValueLength)
+    print 'Version info signatures: ', hex(pe.VS_FIXEDFILEINFO.Signature)
+    print 'Version info file flags: ', hex(pe.VS_FIXEDFILEINFO.FileFlags)
+    print 'Version info file OS: ', hex(pe.VS_FIXEDFILEINFO.FileOS)
+
+
+def print_sections(pe):
+    print '---FILE SECTIONS---'
+    for section in pe.sections:
+        print 'Name: ', section.Name
+        print 'Virtual address: ', hex(section.VirtualAddress)
+        print 'Size of raw data: ', section.SizeOfRawData
+
+
+def headers_info(pe):
+    print '\n---NT HEADERS---'
+
+    print '\nSignature:'
+    for key, value in pe.NT_HEADERS.dump_dict().get('Signature').items():
+        print key, value
+
+    print '\n---FILE HEADERS---'
+
+    print '\nNumber Of Sections:'
+    for key, value in pe.FILE_HEADER.dump_dict().get('NumberOfSections').items():
+        print key, value
+
+    print '\nTime Date Stamp:'
+    for key, value in pe.FILE_HEADER.dump_dict().get('TimeDateStamp').items():
+        print key, value
+
+    print '\nPointer To Symbol Table:'
+    for key, value in pe.FILE_HEADER.dump_dict().get('PointerToSymbolTable').items():
+        print key, value
+
+    print '\nNumber Of Symbols:'
+    for key, value in pe.FILE_HEADER.dump_dict().get('NumberOfSymbols').items():
+        print key, value
+
+    print '\nMachine:'
+    for key, value in pe.FILE_HEADER.dump_dict().get('Machine').items():
+        print key, value
+
+    print '\nCharacteristics:'
+    for key, value in pe.FILE_HEADER.dump_dict().get('Characteristics').items():
+        print key, value
+
+    print '\nSize Of Optional Header:'
+    for key, value in pe.FILE_HEADER.dump_dict().get('SizeOfOptionalHeader').items():
+        print key, value
+
+
+filePath = sys.argv[1]
+
+if not file_is_empty(filePath):
+    print('Path to file is not properly')
+
+pe = pefile.PE(filePath)
+print_base_file_info(pe)
+print_sections(pe)
+headers_info(pe)

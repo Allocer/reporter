@@ -1,0 +1,7 @@
+<div class="panel panel-primary">
+    <form action="{% url 'reporter:upload_file' %}" method="post">{% csrf_token %}
+        <input type="file" name="myfile">
+        <button type="submit" value="submit">Upload</button>
+    </form>
+
+</div>
